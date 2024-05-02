@@ -24,7 +24,7 @@ wss.on('connection', (ws, req) => {
     
     ws.on('message', (message) => {
         const msg = JSON.parse(message)
-        if (msg.active!== undefined) {
+        if (msg.active !== undefined) {
             if (msg.active) {
                 activeClients++
             } else {
@@ -32,6 +32,8 @@ wss.on('connection', (ws, req) => {
             }
             console.log(`Client ${userIdentifier} is now ${msg.active? 'active' : 'inactive'}`)
             console.log(`Number of active clients: ${activeClients}`)
+        } else if (msg.ping !== undefined) {
+            ws.send(JSON.stringify({ activeClients: activeClients }))
         } else {
             console.log(`Received message from ID ${userIdentifier} => ${message}`)
             ws.send(`Server response: ${message}`)

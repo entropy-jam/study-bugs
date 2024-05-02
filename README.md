@@ -7,7 +7,9 @@ Virtual body-doubling using websockets!
 
 ## Roadmap
 - [x] Websocket boilerplate
-- [ ] Client able to ask for # of connected users
+- [x] Correct activity tracking
+- [x] Interactive client
+- [x] Client able to ask for # of connected users
 
 ### Dependencies
 - `websocket`
