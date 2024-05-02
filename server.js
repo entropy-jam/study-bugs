@@ -3,6 +3,7 @@ const crypto = require('crypto');
 
 const wss = new WebSocket.Server({ port: 8080 });
 let connectedClients = 0; // Variable to keep track of the number of connected clients
+let activeClients = 0; // Variable to keep track of the active connected clients
 
 // Function to hash client IP
 const hashIdentifier = (input) => {

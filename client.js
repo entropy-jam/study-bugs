@@ -1,18 +1,26 @@
-const socket = new WebSocket('ws://localhost:8080');
+const WebSocketClient = require('websocket').client;
 
-socket.onopen = () => {
-  console.log('Connected to the WebSocket server');
-  socket.send('Hello from client!');
-};
+var client = new WebSocketClient();
 
-socket.onmessage = (event) => {
-  console.log(`Received message from server: ${event.data}`);
-};
+client.on('connectFailed', function(error) {
+    console.log('Connect Error: ' + error.toString());
+});
 
-socket.onclose = () => {
-  console.log('Disconnected from the WebSocket server');
-};
+client.on('connect', function(connection) {
+    console.log('Connection established!');
+    
+    connection.on('error', function(error) {
+        console.log("Connection error: " + error.toString());
+    });
+    
+    connection.on('close', function() {
+        console.log('Connection closed!');
+    });
+    
+    connection.on('message', function(message) {
+        console.log("Current time on server is: '" + message.utf8Data + "'");
+    });
+});
 
-socket.onerror = (error) => {
-  console.log('Error occurred:', error);
-};
+client.connect('ws://localhost:8080/');
+
