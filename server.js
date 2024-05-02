@@ -1,21 +1,33 @@
 const WebSocket = require('ws');
+const crypto = require('crypto');
 
 const wss = new WebSocket.Server({ port: 8080 });
 let connectedClients = 0; // Variable to keep track of the number of connected clients
 
-wss.on('connection', (ws) => {
-  connectedClients++; // Increment the count on new connection
-  console.log('Client connected');
+// Function to hash client IP
+const hashIdentifier = (input) => {
+  return crypto.createHash('sha256').update(input).digest('hex');
+};
+
+wss.on('connection', (ws, req) => {
+  // Increment the count on new connection
+  connectedClients++;
+  
+  // Hash the remote IP address
+  const userIdentifier = hashIdentifier(req.socket.remoteAddress);
+  
+  console.log(`Client connected with ID: ${userIdentifier}`);
   console.log(`Number of connected clients: ${connectedClients}`);
 
   ws.on('message', (message) => {
-    console.log(`Received message => ${message}`);
+    console.log(`Received message from ID ${userIdentifier} => ${message}`);
     ws.send(`Server response: ${message}`);
   });
 
   ws.on('close', () => {
-    connectedClients--; // Decrement the count on disconnection
-    console.log('Client disconnected');
+    // Decrement the count on disconnection
+    connectedClients--;
+    console.log(`Client with ID ${userIdentifier} disconnected`);
     console.log(`Number of connected clients: ${connectedClients}`);
   });
 });
